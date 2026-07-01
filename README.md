@@ -1,10 +1,10 @@
 # Multi-Engine API: Your Subscriptions, One Endpoint
 
 <p align="center">
-  <b>Turn the AI subscriptions you already pay for into a single API, with no separate API bills.</b>
+  <img src="https://raw.githubusercontent.com/MeshVSC/API_Wrapper/main/Assets/hero_banner.png" alt="Multi-Engine API Banner" width="100%">
 </p>
 
-> **Multi-Engine API** puts the AI coding tools you already own behind one standard endpoint. Claude, Gemini, Codex, Qwen, GLM, and Kimi, all reachable from any app, all running on the plans you already have.
+> **Multi-Engine API** turns the AI coding subscriptions you already pay for into one standard endpoint any app can use. Claude, Gemini, Codex, Qwen, GLM, and Kimi, reachable from anything that speaks the common chat API, with no keys to buy and no per-use bills.
 
 [![Node](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org)
 [![API](https://img.shields.io/badge/API-OpenAI--Compatible-blue.svg)]()
@@ -13,21 +13,21 @@
 
 ---
 
-## The Idea: Pay Once, Use Everywhere
+## The Vision: One Stack, Every App
 
-Every AI coding tool ships its own command-line app that runs on your subscription. This server wraps those apps in one standard API, so any program that already knows how to talk to an AI can talk to yours instead. No API keys to buy, no per-use charges, just the plans you already pay for.
+Every AI coding tool ships its own command-line app that runs on your subscription. This server wraps those apps in one standard endpoint, so any program that already knows how to talk to an AI talks to yours instead. No API keys to buy, no per-use charges, just the plans you already pay for, unified behind a single connection.
 
 ### Six Engines, One Connection
-- **Claude, Gemini, Codex, Qwen, GLM, Kimi**: all behind the same endpoint.
-- **Live Switching**: pick which AI answers from a dashboard, and change it anytime without restarting.
+- **Unified Endpoint**: Claude, Gemini, Codex, Qwen, GLM, and Kimi all answer at the same address.
+- **Live Switching**: pick which AI answers from a dashboard, and change it anytime without a restart.
 - **Per-Engine Memory**: each engine remembers the last model you chose for it.
 
 ### Always Current
-- **Automatic Versions**: new versions of a model are picked up on their own, so you never edit the app when a provider ships one.
+- **Automatic Versions**: new versions of a model are picked up on their own, so you never touch the app when a provider ships one.
 - **Runtime Discovery**: where an engine can list its own models, brand-new ones appear in the dropdown by themselves.
 
 ### Built to Extend
-- **One Adapter per Engine**: each engine lives in its own small piece, so a quirk in one never affects the others.
+- **One Adapter per Engine**: each engine lives in its own small piece, so a quirk in one never affects another.
 - **Drop-In Growth**: adding a new engine later is a small addition, not a rewrite.
 
 ---
@@ -42,34 +42,24 @@ Every AI coding tool ships its own command-line app that runs on your subscripti
 ### The API
 - **OpenAI-Compatible**: any app built for the standard chat API works unchanged.
 - **Function Calling**: tool-calling apps keep working through a built-in emulation layer.
-- **Streaming**: replies can stream token by token or arrive all at once.
+- **Streaming**: replies stream token by token or arrive all at once.
 - **Secure by Default**: every request needs an API key, so it stays safe wherever it runs.
 
 ---
 
-## Getting Started
+## Experience It
 
 ### Prerequisites
 - Node.js 18 or later
 - At least one supported CLI installed and logged in: `claude`, `gemini`, `codex`, `qwen`, `zai` (GLM), or `kimi`
 - The subscription for whichever engine you want to use
 
-### Launch
-1. **Start** the server from the project folder:
-
-```bash
-node server.js
-```
-
-2. **Open** the dashboard:
-
-```
-http://localhost:8787
-```
-
-3. **Connect** any app using the base URL and API key shown on the dashboard.
-4. **Pick** your engine and model from the dashboard dropdowns.
-5. **Send** a request:
+### Getting Started
+1. **Launch**: start the server from the project folder with `node server.js`.
+2. **Open**: visit the dashboard at `http://localhost:8787`.
+3. **Connect**: point any app at the base URL and API key shown on the dashboard.
+4. **Choose**: pick your engine and model from the dashboard dropdowns.
+5. **Send**: fire a request and get the answer back in the standard shape.
 
 ```bash
 curl http://localhost:8787/v1/chat/completions \
@@ -78,15 +68,21 @@ curl http://localhost:8787/v1/chat/completions \
   -d '{ "messages": [{ "role": "user", "content": "Hello" }] }'
 ```
 
----
-
-## Configuration
+### Configuration
 - **`PORT`**: port to listen on (default 8787).
 - **`WRAPPER_API_KEY`**: if set, clients must send this key. Leave empty for open localhost use.
 - **`WRAPPER_PROVIDER`**: which engine to start on (`claude`, `gemini`, `codex`, `qwen`, `glm`, `kimi`).
 - **`WRAPPER_NAME`**: the product name shown on the dashboard.
 - **`CLAUDE_BIN`, `GEMINI_BIN`, `CODEX_BIN`, `QWEN_BIN`, `GLM_BIN`, `KIMI_BIN`**: path to each CLI if it is not on your PATH.
 - **`CLAUDE_TIMEOUT_MS`**: how long to wait per request in milliseconds (default 180000).
+
+---
+
+## Trust by Design
+- **Your Plans, Your Machine**: it runs on the subscriptions you already own, through their official CLIs, on your own computer.
+- **No Credit Drain**: nothing here spends API credits, so there is no metered bill behind your requests.
+- **Key-Gated**: every request is authenticated, so the endpoint is safe to run wherever you need it.
+- **Isolated Engines**: one engine's quirks stay contained in its own adapter and never leak into the rest.
 
 ---
 
