@@ -1,102 +1,106 @@
-# Multi-Engine API
+# Multi-Engine API: Your Subscriptions, One Endpoint
 
-Turn your AI subscription into an API you can use without paying separately. Works with Claude, Gemini, Codex, Qwen, GLM, and Kimi, switch between them from a simple dashboard.
+<p align="center">
+  <b>Turn the AI subscriptions you already pay for into a single API, with no separate API bills.</b>
+</p>
 
-## Overview
+> **Multi-Engine API** puts the AI coding tools you already own behind one standard endpoint. Claude, Gemini, Codex, Qwen, GLM, and Kimi, all reachable from any app, all running on the plans you already have.
 
-This is a small local server that puts the AI coding tools you already pay for behind a standard API that any app can connect to. Instead of buying separate API credits, it runs your prompts through the official command-line tools on your existing subscriptions and hands the answers back in the format apps expect.
+[![Node](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org)
+[![API](https://img.shields.io/badge/API-OpenAI--Compatible-blue.svg)]()
+[![Engines](https://img.shields.io/badge/Engines-6-blueviolet.svg)]()
+![License](https://img.shields.io/badge/license-Proprietary-red.svg)
 
-- **One endpoint, six engines**: Claude, Gemini, Codex, Qwen, GLM (Z.ai), and Kimi, all behind the same API
-- **No API keys or credits**: it uses the subscription plans you already have, through their official CLIs
-- **Live engine switching**: pick which AI answers from a dashboard, and change it anytime without restarting
-- **Automatic model updates**: new model versions are picked up on their own, so you do not edit the app every time a provider ships one
-- **Function calling and streaming**: apps that expect tool calls or streamed replies keep working
-- **Secure by default**: every request needs an API key, so it stays safe wherever you run it
+---
 
-## Requirements
+## The Idea: Pay Once, Use Everywhere
 
+Every AI coding tool ships its own command-line app that runs on your subscription. This server wraps those apps in one standard API, so any program that already knows how to talk to an AI can talk to yours instead. No API keys to buy, no per-use charges, just the plans you already pay for.
+
+### Six Engines, One Connection
+- **Claude, Gemini, Codex, Qwen, GLM, Kimi**: all behind the same endpoint.
+- **Live Switching**: pick which AI answers from a dashboard, and change it anytime without restarting.
+- **Per-Engine Memory**: each engine remembers the last model you chose for it.
+
+### Always Current
+- **Automatic Versions**: new versions of a model are picked up on their own, so you never edit the app when a provider ships one.
+- **Runtime Discovery**: where an engine can list its own models, brand-new ones appear in the dropdown by themselves.
+
+### Built to Extend
+- **One Adapter per Engine**: each engine lives in its own small piece, so a quirk in one never affects the others.
+- **Drop-In Growth**: adding a new engine later is a small addition, not a rewrite.
+
+---
+
+## Feature Inventory
+
+### The Dashboard
+- **Live Status**: uptime, request count, errors, and last-request time at a glance.
+- **Engine and Model Pickers**: switch the active AI and its model from two dropdowns.
+- **One-Click Copy**: base URL and API key copy straight to your clipboard.
+
+### The API
+- **OpenAI-Compatible**: any app built for the standard chat API works unchanged.
+- **Function Calling**: tool-calling apps keep working through a built-in emulation layer.
+- **Streaming**: replies can stream token by token or arrive all at once.
+- **Secure by Default**: every request needs an API key, so it stays safe wherever it runs.
+
+---
+
+## Getting Started
+
+### Prerequisites
 - Node.js 18 or later
-- At least one of the supported CLIs installed and logged in:
-  - `claude`, `gemini`, `codex`, `qwen`, `zai` (GLM), or `kimi`
+- At least one supported CLI installed and logged in: `claude`, `gemini`, `codex`, `qwen`, `zai` (GLM), or `kimi`
 - The subscription for whichever engine you want to use
 
-## Installation
-
-1. Clone or download this repository
-2. From the project folder, start the server:
+### Launch
+1. **Start** the server from the project folder:
 
 ```bash
 node server.js
 ```
 
-3. Open the dashboard in your browser:
+2. **Open** the dashboard:
 
 ```
 http://localhost:8787
 ```
 
-The dashboard shows the server status, your API key, the connection URL, and the dropdowns for choosing the engine and model.
-
-## Usage
-
-Point any app that speaks the standard chat API at the server:
-
-- **Base URL**: `http://localhost:8787/v1`
-- **API key**: shown on the dashboard (copy it with the button)
-- **Model**: whatever you selected on the dashboard is forced on every request
-
-Example request:
+3. **Connect** any app using the base URL and API key shown on the dashboard.
+4. **Pick** your engine and model from the dashboard dropdowns.
+5. **Send** a request:
 
 ```bash
 curl http://localhost:8787/v1/chat/completions \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{
-    "messages": [{ "role": "user", "content": "Hello" }]
-  }'
+  -d '{ "messages": [{ "role": "user", "content": "Hello" }] }'
 ```
 
-### Switching engines
-
-Use the Engine dropdown on the dashboard to switch between Claude, Gemini, Codex, Qwen, GLM, and Kimi. The server re-checks that engine and refreshes its model list. Each engine remembers the last model you picked for it.
+---
 
 ## Configuration
+- **`PORT`**: port to listen on (default 8787).
+- **`WRAPPER_API_KEY`**: if set, clients must send this key. Leave empty for open localhost use.
+- **`WRAPPER_PROVIDER`**: which engine to start on (`claude`, `gemini`, `codex`, `qwen`, `glm`, `kimi`).
+- **`WRAPPER_NAME`**: the product name shown on the dashboard.
+- **`CLAUDE_BIN`, `GEMINI_BIN`, `CODEX_BIN`, `QWEN_BIN`, `GLM_BIN`, `KIMI_BIN`**: path to each CLI if it is not on your PATH.
+- **`CLAUDE_TIMEOUT_MS`**: how long to wait per request in milliseconds (default 180000).
 
-Settings are read from environment variables. Copy `.env.example` to `.env` and adjust, or set them inline. Nothing is required to run locally.
+---
 
-- `PORT`: port to listen on (default 8787)
-- `WRAPPER_API_KEY`: if set, clients must send this key. Leave empty for open localhost use
-- `WRAPPER_PROVIDER`: which engine to start on (`claude`, `gemini`, `codex`, `qwen`, `glm`, `kimi`)
-- `WRAPPER_NAME`: the product name shown on the dashboard
-- `CLAUDE_BIN`, `GEMINI_BIN`, `CODEX_BIN`, `QWEN_BIN`, `GLM_BIN`, `KIMI_BIN`: path to each CLI if it is not on your PATH
-- `CLAUDE_TIMEOUT_MS`: how long to wait per request in milliseconds (default 180000)
+## Support & Identity
+- **Creator**: Stephane Bessa
+- **Studio**: MeshStudios
+- **Location**: Barcelona, Spain 2026
 
-## Endpoints
+**Built with a multi-modal coalition:**
+- Claude Code
+- ChatGPT
+- Qwen
 
-- `GET /`: dashboard
-- `GET /health`: quick liveness check
-- `GET /status`: live metrics as JSON (shows the key on localhost)
-- `POST /provider`: switch the active engine (localhost only)
-- `POST /model`: set the forced model (localhost only)
-- `POST /models/refresh`: re-check the active engine's model list (localhost only)
-- `POST /shutdown`: stop the server (localhost only)
-- `GET /v1/models`: lists the current model
-- `POST /v1/chat/completions`: the main chat endpoint (streaming and non-streaming)
-
-## Architecture
-
-The server keeps one shared engine and a small adapter per CLI, so adding a new one later is a small drop-in, not a rewrite.
-
-1. **Shared core**: the API layer, authentication, function-calling emulation, streaming, and dashboard are the same for every engine
-2. **Provider registry**: each engine has one adapter that knows only its own command-line flags and how to read its output, so a quirk in one never affects another
-3. **Model strategy**: engines are selected by tier alias (which the CLI maps to the latest version on its own), and where a CLI can list its models, new ones are discovered at runtime
-4. **State**: the active engine and the last-picked model per engine are saved, so your choices survive a restart
-
-## Notes
-
-- The Claude path is a straight continuation of the original working version. The other five adapters follow each CLI's documented behavior and may need small tuning against their real output, GLM and Kimi most likely
-- The product name is a placeholder and can be changed with `WRAPPER_NAME`
-
-## License
-
-MIT
+<p align="center">
+  <b>One subscription stack. Every app. No extra bills.</b><br>
+  Made with care in Barcelona
+</p>
