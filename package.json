@@ -1,0 +1,13 @@
+{
+  "name": "claude-code-api-wrapper",
+  "version": "0.1.0",
+  "description": "OpenAI-compatible HTTP API in front of the Claude Code CLI. Runs on your Claude subscription via the official CLI's print mode.",
+  "type": "commonjs",
+  "bin": {
+    "claude-code-api-wrapper": "server.js"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "MIT"
+}

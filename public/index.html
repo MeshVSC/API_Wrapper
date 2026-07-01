@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Claude Code API · Mesh Studio 2026</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg:#ececec; --content:#ffffff;
+    --txt:#1d1d1f; --txt2:rgba(0,0,0,0.5);
+    --sep:rgba(0,0,0,0.08); --accent:#007aff; --green:#34c759; --red:#ff3b30;
+    --shadow:0 1px 3px rgba(0,0,0,0.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#1c1c1e; --content:#2c2c2e; --txt:rgba(255,255,255,0.92);
+      --txt2:rgba(255,255,255,0.5); --sep:rgba(255,255,255,0.1); --shadow:0 1px 3px rgba(0,0,0,0.3);
+    }
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+    background:var(--bg); color:var(--txt); -webkit-font-smoothing:antialiased;
+    font-size:13px; min-height:100vh; padding:24px 20px 60px;
+  }
+  .grid { max-width:780px; margin:0 auto; display:grid; grid-template-columns:repeat(4,1fr); gap:16px; align-items:start; }
+
+  .tile {
+    background:var(--content); border:1px solid var(--sep); border-radius:20px;
+    padding:18px 20px; box-shadow:var(--shadow); min-height:110px; display:flex; flex-direction:column;
+  }
+  .tile .label { font-size:12px; font-weight:600; color:var(--txt2); }
+  .tile .big { font-size:32px; font-weight:600; letter-spacing:-0.02em; margin-top:auto; }
+  .tile .sub { font-size:12px; color:var(--txt2); margin-top:3px; }
+  /* Apple widget proportions: small = square (1:1), medium = 2:1, large = full width. */
+  .small { grid-column:span 1; aspect-ratio:1/1; }
+  .medium { grid-column:span 2; aspect-ratio:2/1; }
+  .span4 { grid-column:span 4; }
+
+  /* hero — tall, roomy, grid-aligned (8pt). Intentionally mostly empty. */
+  .hero { grid-column:span 4; flex-direction:column; justify-content:space-between; min-height:288px; padding:40px; }
+  .hero .heroBottom { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; }
+  .hero .eyebrow { font-size:11px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--txt2); }
+  .hero h1 { font-size:32px; font-weight:600; letter-spacing:-0.025em; margin:8px 0; }
+  .hero .tag { font-size:14px; color:var(--txt2); }
+  .hero .actions { display:flex; align-items:center; gap:16px; }
+  .pill { display:flex; align-items:center; gap:7px; font-size:13px; color:var(--txt2);
+    background:rgba(127,127,127,0.12); border-radius:999px; padding:7px 14px; }
+  .dot { width:8px; height:8px; border-radius:50%; background:var(--red); }
+  .pill.up .dot { background:var(--green); }
+  .hero .btns { display:flex; gap:10px; }
+  .btn { font:inherit; font-size:13px; font-weight:500; color:var(--txt);
+    background:rgba(127,127,127,0.14); border:1px solid var(--sep); border-radius:999px;
+    padding:8px 18px; cursor:pointer; transition:background .12s; }
+  .btn:hover { background:rgba(127,127,127,0.22); }
+  .btn:disabled { opacity:0.4; cursor:default; }
+
+  .tile.statustile { flex-direction:row; align-items:center; gap:16px; }
+  .statusdot { width:14px; height:14px; border-radius:50%; flex:none; background:var(--red); transition:background .2s; }
+  .statustile.up .statusdot { background:var(--green); animation:livepulse 2s infinite; }
+  @keyframes livepulse { 0%{box-shadow:0 0 0 0 rgba(52,199,89,0.4);} 70%{box-shadow:0 0 0 8px rgba(52,199,89,0);} 100%{box-shadow:0 0 0 0 rgba(52,199,89,0);} }
+  .statustile .big { font-size:22px; margin:0; }
+
+  .rows { margin-top:12px; display:flex; flex-direction:column; gap:13px; }
+  .crow { display:flex; align-items:center; gap:12px; }
+  .crow .k { color:var(--txt2); font-size:12.5px; width:80px; flex:none; }
+  .crow .v { margin-left:auto; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12.5px; }
+
+  /* thin slick pill copy button */
+  .copy { font:inherit; font-size:11px; font-weight:600; color:var(--txt); flex:none;
+    background:rgba(127,127,127,0.14); border:1px solid var(--sep); border-radius:999px;
+    padding:4px 13px; cursor:pointer; transition:background .12s,color .12s; }
+  .copy:hover { background:rgba(127,127,127,0.24); }
+  .copy.done { color:#fff; background:var(--green); border-color:transparent; }
+  .select { font:inherit; font-size:12.5px; color:var(--txt); background:rgba(127,127,127,0.14);
+    border:1px solid var(--sep); border-radius:8px; padding:5px 11px; cursor:pointer; }
+
+  /* toggle switch */
+  .switch { position:relative; display:inline-block; width:40px; height:24px; flex:none; margin-left:auto; }
+  .switch input { opacity:0; width:0; height:0; }
+  .track { position:absolute; inset:0; background:rgba(120,120,128,0.32); border-radius:999px; transition:.2s; }
+  .track::after { content:""; position:absolute; top:2px; left:2px; width:20px; height:20px; background:#fff; border-radius:50%; transition:.2s; box-shadow:0 1px 2px rgba(0,0,0,0.3); }
+  .switch input:checked + .track { background:var(--green); }
+  .switch input:checked + .track::after { transform:translateX(16px); }
+
+  .help { font-size:12px; color:var(--txt2); margin-top:5px; line-height:1.45; }
+  .authrow { display:flex; align-items:flex-start; gap:16px; margin-top:18px; }
+  .authrow .atext { flex:1; }
+  .authrow .at { font-size:13px; font-weight:600; }
+  .authrow .ad { font-size:12px; color:var(--txt2); margin-top:4px; line-height:1.45; }
+  .authrow .switch { margin-left:0; margin-top:2px; }
+
+  svg.spark { width:100%; height:30px; margin-top:8px; overflow:visible; }
+  svg.spark polyline { fill:none; stroke:var(--accent); stroke-width:2; stroke-linejoin:round; stroke-linecap:round; }
+  svg.spark .area { fill:var(--accent); opacity:0.10; stroke:none; }
+  .warn { color:var(--red); }
+</style>
+</head>
+<body>
+  <div class="grid">
+
+    <div class="tile hero">
+      <div class="eyebrow" id="eyebrow">Mesh Studio 2026</div>
+      <div class="heroBottom">
+        <div>
+          <h1 id="productName">Multi-Engine API</h1>
+          <div class="tag">OpenAI-compatible endpoint on your CLI subscriptions</div>
+        </div>
+        <div class="actions">
+          <span class="pill" id="status"><span class="dot"></span><span id="statusText">Connecting</span></span>
+          <button class="btn" id="stop">Stop</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tile statustile small" id="statustile">
+      <span class="statusdot"></span>
+      <div><div class="label">Server</div><div class="big" id="serverState">--</div></div>
+    </div>
+    <div class="tile small"><div class="label">Uptime</div><div class="big" id="uptime">--</div></div>
+    <div class="tile small"><div class="label">Errors</div><div class="big" id="errors">--</div></div>
+    <div class="tile small"><div class="label">Last request</div><div class="big" id="last" style="font-size:20px;">--</div></div>
+
+    <div class="tile medium">
+      <div class="label">Requests</div>
+      <div class="big" id="requests">--</div>
+      <svg class="spark" id="spark" viewBox="0 0 100 30" preserveAspectRatio="none">
+        <polyline class="area" id="sparkArea" points="" /><polyline id="sparkLine" points="" />
+      </svg>
+    </div>
+    <div class="tile medium">
+      <div class="label">Engine</div>
+      <div class="big" id="claude" style="font-size:18px;">--</div>
+    </div>
+
+    <div class="tile span4">
+      <div class="label">Connection</div>
+      <div class="rows">
+        <div class="crow"><span class="k">Provider type</span><span class="v" id="provider">OpenAI</span><button class="copy" data-key="provider">Copy</button></div>
+        <div class="crow"><span class="k">Engine</span><select id="providerSelect" class="select"></select><span class="v" id="enginev">--</span></div>
+        <div class="crow"><span class="k">Base URL</span><span class="v" id="endpoint">--</span><button class="copy" data-key="endpoint">Copy</button></div>
+        <div class="crow"><span class="k">API key</span><span class="v" id="apikey">--</span><button class="copy" data-key="apikey">Copy</button></div>
+        <div class="crow"><span class="k">Model</span><select id="modelSelect" class="select"></select><span class="v" id="model">--</span><button class="copy" data-key="model">Copy</button></div>
+      </div>
+      <div class="help">The selected model is forced on every request — whatever Kai or Obsidian asks for, the server uses this. The API key is required on every request, so the server is secure wherever it runs.</div>
+    </div>
+
+  </div>
+
+<script>
+  const hist=[]; const MAX=40; let stopped=false, curKey='';
+  function fmtUptime(s){ if(s==null) return '--'; const h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=s%60;
+    return (h?h+'h ':'')+(m||h?m+'m ':'')+sec+'s'; }
+  function fmtAgo(ts){ if(!ts) return 'Never'; const d=Math.floor((Date.now()-ts)/1000);
+    if(d<5) return 'Just now'; if(d<60) return d+'s ago'; if(d<3600) return Math.floor(d/60)+'m ago'; return Math.floor(d/3600)+'h ago'; }
+  function set(id,v){ const el=document.getElementById(id); if(el) el.textContent=v; }
+
+  function drawSpark(){
+    const a=document.getElementById('sparkArea'), l=document.getElementById('sparkLine');
+    if(hist.length<2){ l.setAttribute('points',''); a.setAttribute('points',''); return; }
+    const max=Math.max(1,...hist), n=hist.length;
+    const pts=hist.map((v,i)=>{ const x=(i/(n-1))*100; const y=28-(v/max)*26; return x.toFixed(1)+','+y.toFixed(1); });
+    l.setAttribute('points',pts.join(' '));
+    a.setAttribute('points','0,30 '+pts.join(' ')+' 100,30');
+  }
+
+  async function tick(){
+    if(stopped) return;
+    try{
+      const s=await (await fetch('/status',{cache:'no-store'})).json();
+      document.getElementById('status').classList.add('up');
+      set('statusText','Running'); set('serverState','Running');
+      document.getElementById('statustile').classList.add('up');
+      set('uptime',fmtUptime(s.uptimeSeconds)); set('errors',s.errors);
+      set('requests',s.requests); set('last',fmtAgo(s.lastRequestAt));
+      set('endpoint',s.endpoint); set('model',s.model);
+      // Product name — single source from the server; drives tab title + hero.
+      if(s.productName){ set('productName',s.productName); document.title=s.productName; }
+      // Engine (provider) dropdown — populate once.
+      const psel=document.getElementById('providerSelect');
+      if(!psel.options.length && Array.isArray(s.availableProviders)){
+        s.availableProviders.forEach(p=>{ const o=document.createElement('option'); o.value=p.id; o.textContent=p.label; psel.appendChild(o); });
+      }
+      if(document.activeElement!==psel && s.activeProvider){ psel.value=s.activeProvider; }
+      // Model dropdown — repopulate whenever the available set changes (provider
+      // switch or newly-discovered models), so the list stays current without reload.
+      const sel=document.getElementById('modelSelect');
+      if(Array.isArray(s.availableModels)){
+        const want=s.availableModels.map(m=>m.id).join('|');
+        if(document.activeElement!==sel && sel.dataset.set!==want){
+          sel.innerHTML='';
+          s.availableModels.forEach(m=>{ const o=document.createElement('option'); o.value=m.id; o.textContent=m.label; sel.appendChild(o); });
+          sel.dataset.set=want;
+        }
+      }
+      if(document.activeElement!==sel && s.selectedModel){ sel.value=s.selectedModel; }
+      curKey = s.apiKey || '';
+      set('apikey', s.apiKey || '(hidden — view on the local machine)');
+      const eng=s.engine||s.claude||{};
+      set('enginev', eng.label||s.activeProvider||'');
+      const ce=document.getElementById('claude');
+      ce.textContent=eng.available?('Connected'+(eng.version?' · '+eng.version:'')):('Not found — run: '+(eng.loginHint||'login'));
+      ce.classList.toggle('warn',!eng.available);
+      hist.push(s.requests); if(hist.length>MAX) hist.shift(); drawSpark();
+    }catch(e){
+      document.getElementById('status').classList.remove('up');
+      set('statusText','Offline'); set('serverState','Offline');
+      document.getElementById('statustile').classList.remove('up');
+    }
+  }
+
+  document.getElementById('providerSelect').addEventListener('change',async(e)=>{
+    try{
+      await fetch('/provider',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({provider:e.target.value})});
+      document.getElementById('modelSelect').dataset.set=''; // force model list rebuild for the new engine
+    }catch(err){}
+    tick();
+  });
+
+  document.getElementById('modelSelect').addEventListener('change',async(e)=>{
+    try{ await fetch('/model',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:e.target.value})}); }catch(err){}
+  });
+
+  document.getElementById('stop').addEventListener('click',async()=>{
+    const b=document.getElementById('stop'); b.disabled=true; b.textContent='Stopping';
+    try{ await fetch('/shutdown',{method:'POST'}); }catch(e){}
+    stopped=true;
+    document.getElementById('status').classList.remove('up');
+    document.getElementById('statustile').classList.remove('up');
+    set('statusText','Stopped'); set('serverState','Stopped'); b.textContent='Stopped';
+  });
+
+  document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',()=>{
+    const which=b.dataset.key;
+    let t = which==='apikey' ? curKey : document.getElementById(which).textContent;
+    if(!t) return;
+    navigator.clipboard.writeText(t).then(()=>{
+      b.textContent='Copied'; b.classList.add('done');
+      setTimeout(()=>{ b.textContent='Copy'; b.classList.remove('done'); },1200);
+    });
+  }));
+
+  tick(); setInterval(tick,2000);
+</script>
+</body>
+</html>
