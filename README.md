@@ -55,11 +55,12 @@ Every AI coding tool ships its own command-line app that runs on your subscripti
 - The subscription for whichever engine you want to use
 
 ### Getting Started
-1. **Launch**: start the server from the project folder with `node server.js`.
-2. **Open**: visit the dashboard at `http://localhost:8787`.
-3. **Connect**: point any app at the base URL and API key shown on the dashboard.
-4. **Choose**: pick your engine and model from the dashboard dropdowns.
-5. **Send**: fire a request and get the answer back in the standard shape.
+1. **Download**: get the project onto your computer, either with `git clone https://github.com/MeshVSC/API_Wrapper.git` or by clicking **Code > Download ZIP** on this page and unzipping it. There is nothing else to install.
+2. **Launch**: start the server from the project folder with `node server.js`.
+3. **Open**: visit the dashboard at `http://localhost:8787`.
+4. **Connect**: point any app at the base URL and API key shown on the dashboard.
+5. **Choose**: pick your engine and model from the dashboard dropdowns.
+6. **Send**: fire a request and get the answer back in the standard shape.
 
 ```bash
 curl http://localhost:8787/v1/chat/completions \
